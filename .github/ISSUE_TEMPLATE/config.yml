@@ -1,8 +1,1 @@
 blank_issues_enabled: false
-contact_links:
-  - name: 先看项目概览
-    url: https://github.com
-    about: 一页纸结论在 docs/00-项目概览.md，读它比开新 issue 更快
-  - name: 数据怎么改
-    url: https://github.com
-    about: 所有数字来自 data/*.csv，改数据后运行 scripts/check_docs.py
