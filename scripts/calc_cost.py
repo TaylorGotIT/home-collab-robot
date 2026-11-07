@@ -130,12 +130,62 @@ def print_roi() -> None:
         print(f"- {label}：{cost} 元，为外包的 {cost / baseline:.0%}")
 
 
+LITE_TIERS = [
+    ("L0 遥控分身", "L0"),
+    ("L1 会拿东西", "L1"),
+    ("L2 能上楼", "L2"),
+]
+
+
+def lite_totals(rows: list[dict] | None = None) -> dict[str, Decimal]:
+    rows = rows if rows is not None else read_csv("bom-lite.csv")
+    out: dict[str, Decimal] = {}
+    for label, code in LITE_TIERS:
+        out[label] = sum(
+            Decimal(r["qty"]) * Decimal(r["price"]) for r in rows if code in r["tiers"].split(";")
+        )
+    return out
+
+
+def print_lite() -> dict[str, Decimal]:
+    rows = read_csv("bom-lite.csv")
+    totals = lite_totals(rows)
+
+    print("\n## 个人版三档合计（元）\n")
+    print("| 档位 | 买到什么 | 合计 |")
+    print("| --- | --- | ---: |")
+    desc = {
+        "L0 遥控分身": "能走、能看、能通话",
+        "L1 会拿东西": "L0 + 4DOF 臂 + 升降 + 雷达 + 深度相机",
+        "L2 能上楼": "L1 + 履带爬楼轮椅底盘（替换普通轮椅）",
+    }
+    for label, _ in LITE_TIERS:
+        print(f"| {label} | {desc[label]} | {money(totals[label])} |")
+
+    print("\n## 个人版物料明细\n")
+    print("| 类别 | 物料 | 规格 | 数量 | 单价 | L0 | L1 | L2 |")
+    print("| --- | --- | --- | ---: | ---: | :-: | :-: | :-: |")
+    for r in rows:
+        tiers = r["tiers"].split(";")
+        marks = ["●" if t in tiers else "" for t in ("L0", "L1", "L2")]
+        print(
+            f"| {r['category']} | {r['item']} | {r['spec']} | {r['qty']} | "
+            f"{money(Decimal(r['price']))} | {marks[0]} | {marks[1]} | {marks[2]} |"
+        )
+    return totals
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--write", action="store_true")
     parser.add_argument("--bom-md", action="store_true")
+    parser.add_argument("--lite", action="store_true")
     args = parser.parse_args()
+
+    if args.lite:
+        print_lite()
+        return 0
 
     rows = read_csv("bom.csv")
     totals = bom_totals(rows)
