@@ -1,0 +1,56 @@
+name: 风险
+description: 登记一条风险（会同步到 docs/07-风险登记册.md）
+title: "[风险] "
+labels: ["type/risk"]
+body:
+  - type: textarea
+    id: desc
+    attributes:
+      label: 风险描述
+      description: 具体到"什么情况下会出什么事"，不要写"可能有风险"
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: 类别
+      options:
+        - 技术
+        - 安全
+        - 合规
+        - 商业
+        - 供应链
+        - 财务
+        - 组织
+        - 伦理
+    validations:
+      required: true
+  - type: dropdown
+    id: probability
+    attributes:
+      label: 概率
+      options: ["高", "中", "低"]
+    validations:
+      required: true
+  - type: dropdown
+    id: impact
+    attributes:
+      label: 影响
+      options: ["极高", "高", "中", "低"]
+    validations:
+      required: true
+  - type: textarea
+    id: mitigation
+    attributes:
+      label: 应对措施
+      description: 必须包含"谁、什么时候、做什么"
+    validations:
+      required: true
+  - type: textarea
+    id: signal
+    attributes:
+      label: 早期信号
+      description: 看到什么指标/现象，就说明这条风险正在发生？
+      placeholder: 例如：台架 100 次内出现 2 次打滑
+    validations:
+      required: true

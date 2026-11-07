@@ -1,0 +1,60 @@
+name: 任务
+description: 标准任务单（与 issues/*.md 的 front-matter 对应）
+title: "[任务] "
+labels: ["type/task"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        提交前请确认：这条任务**不在「不做清单」里**（见 docs/02 第四节）。
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景
+      description: 为什么要做这件事？不做会怎样？
+    validations:
+      required: true
+  - type: textarea
+    id: deliverable
+    attributes:
+      label: 交付物
+      value: |
+        - [ ] 
+        - [ ] 
+    validations:
+      required: true
+  - type: textarea
+    id: dod
+    attributes:
+      label: 验收标准（DoD）
+      description: 可测量、可复现、有证据
+      value: |
+        - [ ] 
+    validations:
+      required: true
+  - type: input
+    id: estimate
+    attributes:
+      label: 估算
+      placeholder: 5d
+    validations:
+      required: true
+  - type: dropdown
+    id: phase
+    attributes:
+      label: 阶段
+      options:
+        - P0
+        - P1
+        - P2
+        - P3
+        - P4
+        - P5
+    validations:
+      required: true
+  - type: input
+    id: depends
+    attributes:
+      label: 依赖
+      description: 依赖的 issue ID，多个用逗号分隔；没有写"无"
+      placeholder: P1-01, P1-02

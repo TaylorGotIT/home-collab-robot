@@ -1,0 +1,23 @@
+name: docs-check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 校验 BOM 与预算一致性
+        run: python scripts/calc_cost.py --check
+
+      - name: 校验文档与数据同步
+        run: python scripts/check_docs.py

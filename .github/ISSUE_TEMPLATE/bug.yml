@@ -1,0 +1,50 @@
+name: 缺陷
+description: 整机/软件/文档的缺陷
+title: "[缺陷] "
+labels: ["type/bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: 现象
+      description: 发生了什么？预期是什么？
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 复现步骤
+      value: |
+        1. 
+        2. 
+        3. 
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: 严重度
+      description: S1 = 安全/数据泄露，立即停线；S4 = 体验瑕疵
+      options:
+        - S1 安全
+        - S2 阻塞
+        - S3 一般
+        - S4 轻微
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: 版本 / 样机编号
+      placeholder: B样 #003 / 固件 0.8.2
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志与证据
+      description: 黑匣子日志路径、录像时间戳、照片
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: 安全检查
+      options:
+        - label: 该缺陷涉及人身安全（安全类缺陷会自动升级为 S1 并通知系统负责人）

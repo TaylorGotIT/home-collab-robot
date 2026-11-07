@@ -1,0 +1,48 @@
+name: 决策（ADR）
+description: 需要留档的方向性决策，合并后应沉淀为 docs/adr/NNNN-*.md
+title: "[决策] "
+labels: ["type/decision"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        判断标准：这个决定如果错了，会不会导致**返工超过 1 个月**或**预算变动超过 10%**？
+        如果是，走 ADR；如果不是，普通任务单即可。
+  - type: textarea
+    id: context
+    attributes:
+      label: 背景
+      description: 现在面对什么问题？有哪些约束（成本、时间、法规）？
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: 备选方案
+      value: |
+        | 方案 | 优点 | 缺点 | 成本影响 |
+        | --- | --- | --- | --- |
+        | A | | | |
+        | B | | | |
+    validations:
+      required: true
+  - type: textarea
+    id: decision
+    attributes:
+      label: 建议决策
+    validations:
+      required: true
+  - type: textarea
+    id: cost
+    attributes:
+      label: 代价与影响
+      description: 选了这个，我们放弃了什么？哪些模块/预算/排期要跟着变？
+    validations:
+      required: true
+  - type: textarea
+    id: rollback
+    attributes:
+      label: 回退方案
+      description: 如果三个月后发现错了，怎么退回来？
+    validations:
+      required: true
