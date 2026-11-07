@@ -1,5 +1,9 @@
 # 家庭互动与工作协作机器人 · Project HomeMate
 
+[![docs-check](https://github.com/TaylorGotIT/home-collab-robot/actions/workflows/ci.yml/badge.svg)](https://github.com/TaylorGotIT/home-collab-robot/actions/workflows/ci.yml)
+[![Issues](https://img.shields.io/github/issues/TaylorGotIT/home-collab-robot)](https://github.com/TaylorGotIT/home-collab-robot/issues)
+[![Milestones](https://img.shields.io/github/milestones/all/TaylorGotIT/home-collab-robot)](https://github.com/TaylorGotIT/home-collab-robot/milestones)
+
 > 一台**可远程接管的轮式移动操作机器人**：在家陪老人孩子、搭把手；出门替我们上门装路由器、跑现场。
 > 这个仓库是本项目的**单一事实来源（SSOT）**——需求、方案、BOM、预算、排期、风险、认证、任务清单全部在此，不再另建 Word/Excel 文档。
 
