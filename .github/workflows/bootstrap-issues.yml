@@ -1,0 +1,31 @@
+name: bootstrap-issues
+
+# 用 GitHub Actions 自带的 GITHUB_TOKEN 创建标签、里程碑与 Issue。
+# 好处：完全不需要个人 PAT —— 推完代码，在 Actions 页面点一下 Run workflow 即可。
+# 幂等：已存在同名 Issue 会跳过，可重复运行。
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 创建标签、里程碑与 Issue
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/create_issues.py --repo "$GITHUB_REPOSITORY"
+
+      - name: 汇总
+        run: echo "已导入 issues/INDEX.md 中的任务清单"

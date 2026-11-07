@@ -56,10 +56,12 @@
 │  └─ roi.csv            # 经济模型假设与结果
 ├─ issues/               # 任务清单（GitHub Issue 的源文件，含 front-matter）
 ├─ scripts/
-│  ├─ calc_cost.py       # 由 CSV 计算 BOM/预算汇总，CI 校验
-│  └─ create_issues.py   # 一键把 issues/ 导入成 GitHub Issue + 里程碑
-├─ tools/push.ps1        # 首次推送脚本
-└─ .github/              # Issue 模板、PR 模板、CI
+│  ├─ calc_cost.py       # 由 CSV 计算 BOM/预算汇总
+│  ├─ check_docs.py      # 文档与数据一致性校验（CI 用）
+│  ├─ gen_issues.py      # 生成 issues/*.md 与索引
+│  └─ create_issues.py   # 导入标签/里程碑/Issue（纯标准库调 REST API）
+├─ tools/setup-github.ps1 # 一键上线脚本（三种鉴权路径）
+└─ .github/              # Issue 模板、PR 模板、CI、bootstrap-issues 工作流
 ```
 
 ## 从哪里开始读
@@ -91,6 +93,47 @@ python scripts/calc_cost.py --check  # CI 用：校验预算与 BOM 一致性
 ```
 
 CI 会在每次 push 时跑 `--check`，数据与文档不一致会直接失败。
+
+## 上线到 GitHub（三种方式，任选其一）
+
+仓库已在本地提交完毕，随时可推。
+
+### 路径 A · 全程不用 token（推荐）
+
+1. 在 GitHub 网页新建**空仓库** `home-collab-robot`（公开，不要勾选 README / .gitignore）。
+2. 在本目录执行：
+
+```powershell
+git remote add origin https://github.com/<你的用户名>/home-collab-robot.git
+git push -u origin main
+```
+
+首次 push 会弹出浏览器登录窗口（Git Credential Manager），登录后自动完成推送——**不需要手工创建 PAT**。
+
+3. 打开仓库 **Actions → bootstrap-issues → Run workflow**。
+   工作流会用 Actions 自带的 `GITHUB_TOKEN` 自动创建 **17 个标签、6 个里程碑、31 个 Issue**，同样不需要你的 PAT。
+
+### 路径 B · 一条命令全自动（需要 PAT）
+
+```powershell
+$env:GITHUB_TOKEN = "github_pat_xxx"
+$env:GITHUB_OWNER = "<你的用户名>"
+.\tools\setup-github.ps1 -CreateRepo home-collab-robot
+```
+
+PAT 只需 4 项权限：Metadata 读、Contents 读写、Issues 读写、Administration 读写。**用完立即删除**。
+
+### 路径 C · 只推代码，Issue 以后再说
+
+```powershell
+.\tools\setup-github.ps1 -RepoUrl https://github.com/<你的用户名>/home-collab-robot.git -SkipIssues
+```
+
+### 上线后建议做的三件事
+
+1. **Settings → Branches**：给 `main` 加保护，要求 PR + `docs-check` 通过。
+2. **Projects**：新建 Board 视图，按 Milestone 分组，就是项目看板。
+3. **Actions**：确认 `docs-check` 已启用，之后每次改数据都会被校验。
 
 ## 如何参与
 

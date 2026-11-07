@@ -109,6 +109,23 @@ def api(method: str, path: str, token: str, payload: dict | None = None) -> tupl
             return exc.code, {"message": raw[:300]}
 
 
+def existing_titles(repo: str, token: str) -> set[str]:
+    """已存在的 issue 标题，用于幂等跳过。"""
+    titles: set[str] = set()
+    page = 1
+    while True:
+        status, resp = api("GET", f"/repos/{repo}/issues?state=all&per_page=100&page={page}", token)
+        if status != 200 or not isinstance(resp, list) or not resp:
+            break
+        for item in resp:
+            if "pull_request" not in item:
+                titles.add(item["title"])
+        if len(resp) < 100:
+            break
+        page += 1
+    return titles
+
+
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--repo", help="owner/name")
@@ -179,10 +196,18 @@ def main() -> int:
                     milestone_numbers[title] = m["number"]
     print(f"里程碑就绪 {len(milestone_numbers)}/{len(MILESTONES)}")
 
-    created = 0
+    seen = existing_titles(args.repo, token)
+    if seen:
+        print(f"仓库已有 {len(seen)} 个 issue，同名将跳过")
+
+    created = skipped = 0
     for i in issues:
+        full_title = f"[{i['id']}] {i['title']}"
+        if full_title in seen:
+            skipped += 1
+            continue
         payload = {
-            "title": f"[{i['id']}] {i['title']}",
+            "title": full_title,
             "body": i["body"],
             "labels": i["labels"],
         }
@@ -197,8 +222,8 @@ def main() -> int:
             print(f"  ✗ [{i['id']}] {status} {resp.get('message')}", file=sys.stderr)
         time.sleep(0.6)
 
-    print(f"完成：创建 {created}/{len(issues)} 个 issue")
-    return 0 if created == len(issues) else 1
+    print(f"完成：创建 {created} 个，跳过 {skipped} 个，共 {len(issues)} 个")
+    return 0 if created + skipped == len(issues) else 1
 
 
 if __name__ == "__main__":
