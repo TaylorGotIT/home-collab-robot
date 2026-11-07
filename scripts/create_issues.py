@@ -113,6 +113,7 @@ def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--repo", help="owner/name")
     p.add_argument("--create-repo", metavar="NAME", help="先创建仓库")
+    p.add_argument("--create-repo-only", action="store_true", help="只创建仓库，不导入 issue")
     p.add_argument("--private", action="store_true", default=True)
     p.add_argument("--public", dest="private", action="store_false")
     p.add_argument("--dry-run", action="store_true")
@@ -151,6 +152,8 @@ def main() -> int:
             return 1
         args.repo = resp["full_name"]
         print(f"已创建仓库 {args.repo}（{'私有' if args.private else '公开'}）")
+        if args.create_repo_only:
+            return 0
 
     if not args.repo or "/" not in args.repo:
         print("需要 --repo owner/name", file=sys.stderr)
